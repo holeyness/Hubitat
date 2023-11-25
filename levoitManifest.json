@@ -47,7 +47,7 @@
       "id": "65bbed4f-4075-46ad-a2fc-c148e1af21e4",
       "name": "VeSync Integration",
       "namespace": "NiklasGustafsson",
-      "location": "https://raw.githubusercontent.com/NiklasGustafsson/Hubitat/master/Drivers/Levoit/VeSyncIntegration.groovy",
+      "location": "https://raw.githubusercontent.com/holeyness/Hubitat/master/Drivers/Levoit/VeSyncIntegration.groovy",
       "required": true
     },
     {
