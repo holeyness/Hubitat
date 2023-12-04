@@ -216,12 +216,14 @@ private deviceType(code) {
         case "LUH-A602S-WEUR":
         case "LUH-A602S-WEU":
         case "LUH-A602S-WJP":
+        case "LUH-A602S-WUSC":
             return "LV600S"
     }
 
     return "N/A";
 }
 private Boolean getDevices() {
+    logDebug("getDevices()")
 
 	def params = [
 		uri: "https://smartapi.vesync.com/cloud/v1/deviceManaged/devices",
@@ -258,7 +260,7 @@ private Boolean getDevices() {
 			if (checkHttpResponse("getDevices", resp))
 			{
                 def newList = [:]
-        logDebug "${resp.data.result.list}"
+                logDebug "${resp.data.result.list}"
 				for (device in resp.data.result.list) {
                     logDebug "Device found: ${device.deviceType} / ${device.deviceName} / ${device.macID} / ${device.cid} / ${device.configModule}"
 
@@ -284,7 +286,6 @@ private Boolean getDevices() {
                         deleteChildDevice(dni);
                     }
                 }
-
 				for (device in resp.data.result.list) {
 
                     def dtype = deviceType(device.deviceType);
@@ -394,6 +395,9 @@ private Boolean getDevices() {
                             equip1.name = device.deviceName;
                             equip1.label = device.deviceName;
                         }
+                    } else {
+                        logError("Unknown dtype: ${dtype} for deviceType ${device.deviceType}")
+
                     }
 				}
 
@@ -410,7 +414,8 @@ private Boolean getDevices() {
 	}
 	catch (e)
 	{
-        logError e.getMessage()
+        logError("getDevices() exception ${e.getMessage()}")
+
 //		checkHttpResponse("getDevices", e.getMessage())
 		return false
 	}
@@ -521,6 +526,7 @@ void logDebugOff() {
 
 
 def checkHttpResponse(action, resp) {
+    logDebug("resp.status==${resp.status}")
 	if (resp.status == 200 || resp.status == 201 || resp.status == 204)
 		return true
 	else if (resp.status == 400 || resp.status == 401 || resp.status == 404 || resp.status == 409 || resp.status == 500)
