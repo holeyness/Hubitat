@@ -41,12 +41,12 @@ metadata {
 
     attribute "target_humidity", "number";
     attribute "mode", "string";
-    attribute "warm_enabled", "boolean";
+    attribute "warm_enabled", "enum", ["true","false"];
     attribute "warm_level", "number";
-    attribute "automatic_stop", "boolean";
-    attribute "display", "boolean";
-    attribute "lacks_water", "boolean";
-    attribute "water_tank_lifted", "boolean";
+    attribute "automatic_stop", "enum", ["true","false"];
+    attribute "display", "enum", ["true","false"];
+    attribute "lacks_water", "enum", ["true","false"];
+    attribute "water_tank_lifted", "enum", ["true","false"];
 
     command "setTargetHumidity", [
       [name: "TargetHumidity*", type: "NUMBER", description: "TargetHumidity (30 - 80)"]
