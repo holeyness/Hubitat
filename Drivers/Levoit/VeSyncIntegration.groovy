@@ -255,21 +255,18 @@ private Boolean getDevices() {
 	{
 		def result = false
 		httpPost(params) { resp ->
-			if (checkHttpResponse("getDevices", resp))
-			{
+            if (checkHttpResponse("getDevices", resp)) {
                 def newList = [:]
-        logDebug "${resp.data.result.list}"
-				for (device in resp.data.result.list) {
+                logDebug "${resp.data.result.list}"
+                for (device in resp.data.result.list) {
                     logDebug "Device found: ${device.deviceType} / ${device.deviceName} / ${device.macID} / ${device.cid} / ${device.configModule}"
 
                     def dtype = deviceType(device.deviceType);
 
-                    if (dtype == "200S")
-                    {
+                    if (dtype == "200S") {
                         newList[device.cid] = device.configModule;
-                        newList[device.cid+"-nl"] = device.configModule;
-                    }
-                    else if (dtype == "400S" || dtype == "300S" || dtype == "600S" || dtype == "LV600S") {
+                        newList[device.cid + "-nl"] = device.configModule;
+                    } else if (dtype == "400S" || dtype == "300S" || dtype == "600S" || dtype == "LV600S") {
                         newList[device.cid] = device.configModule;
                     }
                 }
@@ -285,7 +282,7 @@ private Boolean getDevices() {
                     }
                 }
 
-				for (device in resp.data.result.list) {
+                for (device in resp.data.result.list) {
 
                     def dtype = deviceType(device.deviceType);
                     logDebug "Installing: ${device.deviceType} / ${device.deviceName} / ${device.macID} / ${dtype}"

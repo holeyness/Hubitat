@@ -135,9 +135,7 @@ def setLevel(level) {
 }
 
 def update() {
-
     parent.updateDevices()
-
 }
 
 def update(status) {
