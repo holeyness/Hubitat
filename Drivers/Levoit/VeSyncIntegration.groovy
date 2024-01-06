@@ -400,7 +400,7 @@ private Boolean getDevices() {
                         if (equip1 == null)
                         {
                             logDebug "Adding ${device.deviceName}"
-                            equip1 = addChildDevice("Levoit Superior 6000S", device.cid, [name: device.deviceName, label: device.deviceName, isComponent: false]);
+                            equip1 = addChildDevice("Levoit Superior 6000S Humidifier", device.cid, [name: device.deviceName, label: device.deviceName, isComponent: false]);
                             equip1.updateDataValue("configModule", device.configModule);
                             equip1.updateDataValue("cid", device.cid);
                             equip1.updateDataValue("uuid", device.uuid);
