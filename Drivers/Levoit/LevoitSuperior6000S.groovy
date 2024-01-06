@@ -199,12 +199,24 @@ def logDebug(msg) {
   }
 }
 
+def logError(msg) {
+  log.error msg
+}
+
+void logDebugOff() {
+  //
+  // runIn() callback to disable "Debug" logging after 30 minutes
+  // Cannot be private
+  //
+  if (settings?.debugOutput) device.updateSetting("debugOutput", [type: "bool", value: false]);
+}
+
 def handlePower(on) {
 
   def result = false
 
   parent.sendBypassRequest(device, [
-    data: [power_switch: on ? 1 : 0, switch_idx: 0],
+    data: [powerSwitch: on ? 1 : 0, switchIdx: 0],
     "method": "setSwitch",
     "source": "APP"
   ]) {
@@ -244,7 +256,7 @@ def handleMode(mode) {
   }
 
   parent.sendBypassRequest(device, [
-          data    : [work_mode: serialized_mode],
+          data    : [workMode: serialized_mode],
           "method": "setHumidityMode",
           "source": "APP"
   ]) {
@@ -260,7 +272,7 @@ def handleDryingMode(drying_mode_enabled) {
   def result = false
 
   parent.sendBypassRequest(device, [
-          data    : ["auto_drying_switch": drying_mode_enabled ? 1 : 0],
+          data    : ["autoDryingSwitch": drying_mode_enabled ? 1 : 0],
           "method": "setDryingMode",
           "source": "APP"
   ]) {
@@ -276,7 +288,7 @@ def handleDisplay(displayOn) {
   def result = false
 
   parent.sendBypassRequest(device, [
-    data: ["screen_switch": displayOn ? 1 : 0],
+    data: ["screenSwitch": displayOn ? 1 : 0],
     "method": "setDisplay",
     "source": "APP"
   ]) {
@@ -295,7 +307,7 @@ def handleTargetHumidity(target_humidity) {
   def result = false
 
   parent.sendBypassRequest(device, [
-    data: ["target_humidity": target_humidity],
+    data: ["targetHumidity": target_humidity],
     "method": "setTargetHumidity",
     "source": "APP"
   ]) {
@@ -327,7 +339,7 @@ def update() {
 
         logDebug "update: ${response}"
 
-        handleEvent("switch", response.enabled ? "on" : "off")
+        handleEvent("switch", response.powerSwitch == 1 ? "on" : "off")
         handleEvent("level", convertRange(response.mist_virtual_level, 1, 9, 0, 100, true))
 
         state.humidity = response.humidity
@@ -336,26 +348,30 @@ def update() {
         state.temperature = response.temperature
         handleEvent("temperature", response.temperature)
 
-        state.mist_level = response.mist_level
-        handleEvent("mist_level", response.mist_level)
+        state.mist_level = response.mistLevel
+        handleEvent("mist_level", response.mistLevel)
 
-        state.target_humidity = response.configuration.auto_target_humidity
-        handleEvent("target_humidity", response.configuration.auto_target_humidity)
+        state.target_humidity = response.targetHumidity
+        handleEvent("target_humidity", response.targetHumidity)
 
-        state.mode = response.mode
-        handleEvent("mode", response.mode)
+        def serialized_mode = response.workMode == 'autoPro' ? 'auto' : response.workMode
+        state.mode = serialized_mode
+        handleEvent("mode", serialized_mode)
 
-        state.drying_mode = response.mode
-        handleEvent("drying_mode", response.mode)
+        def serialized_drying_mode = response.dryingMode && response.dryingMode.autoDryingSwitch == 1
+        state.drying_mode = serialized_drying_mode
+        handleEvent("drying_mode", serialized_drying_mode)
 
-        state.display = response.display
-        handleEvent("display", response.display)
+        handleEvent("filter_life_percentage", response.filterLifePercent)
 
-        state.lacks_water = response.water_lacks
-        handleEvent("lacks_water", response.water_lacks)
+        state.display = response.screenSwitch
+        handleEvent("display", response.screenSwitch)
 
-        state.water_tank_lifted = response.water_tank_lifted
-        handleEvent("water_tank_lifted", response.water_tank_lifted)
+        state.lacks_water = response.waterLacksState == 1
+        handleEvent("lacks_water", response.waterLacksState == 1)
+
+        state.water_tank_lifted = response.waterTankLifted == 1
+        handleEvent("water_tank_lifted", response.waterTankLifted == 1)
       }
   }
   return result
