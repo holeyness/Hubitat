@@ -56,6 +56,13 @@
       "namespace": "NiklasGustafsson",
       "location": "https://raw.githubusercontent.com/holeyness/Hubitat/master/Drivers/Levoit/LevoitLV600S.groovy",
       "required": false
+    },
+    {
+      "id": "34f0e246-8ffa-42ab-9694-09d29a8d9385",
+      "name": "Levoit Superior 6000S Humidifier",
+      "namespace": "NiklasGustafsson",
+      "location": "https://raw.githubusercontent.com/holeyness/Hubitat/master/Drivers/Levoit/LevoitSuperior6000S.groovy",
+      "required": false
     }
   ]
 }

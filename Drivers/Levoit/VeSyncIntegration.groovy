@@ -217,6 +217,9 @@ private deviceType(code) {
         case "LUH-A602S-WEU":
         case "LUH-A602S-WJP":
             return "LV600S"
+        case "Superior6000S":
+        case "LEH-S601S-WUS":
+            return "Superior6000S"
     }
 
     return "N/A";
@@ -266,7 +269,7 @@ private Boolean getDevices() {
                     if (dtype == "200S") {
                         newList[device.cid] = device.configModule;
                         newList[device.cid + "-nl"] = device.configModule;
-                    } else if (dtype == "400S" || dtype == "300S" || dtype == "600S" || dtype == "LV600S") {
+                    } else if (dtype == "400S" || dtype == "300S" || dtype == "600S" || dtype == "LV600S" || dtype == "Superior6000S") {
                         newList[device.cid] = device.configModule;
                     }
                 }
@@ -381,6 +384,23 @@ private Boolean getDevices() {
                         {
                             logDebug "Adding ${device.deviceName}"
                             equip1 = addChildDevice("Levoit LV600S Humidifier", device.cid, [name: device.deviceName, label: device.deviceName, isComponent: false]);
+                            equip1.updateDataValue("configModule", device.configModule);
+                            equip1.updateDataValue("cid", device.cid);
+                            equip1.updateDataValue("uuid", device.uuid);
+                        }
+                        else {
+                            // In case the device name has changed.
+                            logDebug "Updating ${device.deviceName} / " + dtype;
+                            equip1.name = device.deviceName;
+                            equip1.label = device.deviceName;
+                        }
+                    }
+                    else if (dtype == "Superior6000S")
+                    {
+                        if (equip1 == null)
+                        {
+                            logDebug "Adding ${device.deviceName}"
+                            equip1 = addChildDevice("Levoit Superior 6000S", device.cid, [name: device.deviceName, label: device.deviceName, isComponent: false]);
                             equip1.updateDataValue("configModule", device.configModule);
                             equip1.updateDataValue("cid", device.cid);
                             equip1.updateDataValue("uuid", device.uuid);
