@@ -158,7 +158,7 @@ def setMistLevel(mist_level) {
   setMode("manual")
   handleMistLevel(mist_level)
   state.mist_level = mist_level
-  scaled_level = convertRange(value, 1, 9, 0, 100, true)
+  scaled_level = convertRange(mist_level, 1, 9, 0, 100, true)
   handleEvent("level", scaled_level)
   handleEvent("mist_level", mist_level)
 }
@@ -349,12 +349,12 @@ def update() {
         handleEvent("humidity", response.humidity)
 
         state.temperature = response.temperature / 10.0
-        handleEvent("temperature", response.temperature)
+        handleEvent("temperature", response.temperature / 10.0)
 
 
         state.mist_level = response.mistLevel
         handleEvent("mist_level", response.mistLevel)
-        handleEvent("level", convertRange(response.mist_virtual_level, 1, 9, 0, 100, true))
+        handleEvent("level", convertRange(response.mistLevel, 1, 9, 0, 100, true))
 
         state.target_humidity = response.targetHumidity
         handleEvent("target_humidity", response.targetHumidity)
