@@ -146,22 +146,26 @@ def toggle() {
 
 def setLevel(value) {
   logDebug "setLevel ${value}"
-  mist_level = convertRange(value, 0, 100, 1, 9, true)
   setMode("manual") // always manual if setLevel() cmd was called
-  setMistLevel(mist_level)
+  mist_level = convertRange(value, 0, 100, 1, 9, true)
+  handleMistLevel(mist_level)
+  handleEvent("level", value)
+  handleEvent("mist_level", mist_level)
 }
 
 def setMistLevel(mist_level) {
   logDebug "setMistLevel(${mist_level})"
+  setMode("manual")
   handleMistLevel(mist_level)
   state.mist_level = mist_level
+  scaled_level = convertRange(value, 1, 9, 0, 100, true)
+  handleEvent("level", scaled_level)
   handleEvent("mist_level", mist_level)
-  device.sendEvent(name: "mist_level", value: mist_level)
 }
 
 def setTargetHumidity(target_humidity) {
   logDebug "setTargetHumidity(${target_humidity})"
-  setMode("auto")
+  setMode("humidity")
   handleTargetHumidity(target_humidity)
   state.target_humidity = target_humidity
   handleEvent("target_humidity", target_humidity)
@@ -340,16 +344,17 @@ def update() {
         logDebug "update: ${response}"
 
         handleEvent("switch", response.powerSwitch == 1 ? "on" : "off")
-        handleEvent("level", convertRange(response.mist_virtual_level, 1, 9, 0, 100, true))
 
         state.humidity = response.humidity
         handleEvent("humidity", response.humidity)
 
-        state.temperature = response.temperature
+        state.temperature = response.temperature / 10.0
         handleEvent("temperature", response.temperature)
+
 
         state.mist_level = response.mistLevel
         handleEvent("mist_level", response.mistLevel)
+        handleEvent("level", convertRange(response.mist_virtual_level, 1, 9, 0, 100, true))
 
         state.target_humidity = response.targetHumidity
         handleEvent("target_humidity", response.targetHumidity)
@@ -364,7 +369,7 @@ def update() {
 
         handleEvent("filter_life_percentage", response.filterLifePercent)
 
-        state.display = response.screenSwitch
+        state.display = response.screenSwitch == 1
         handleEvent("display", response.screenSwitch)
 
         state.lacks_water = response.waterLacksState == 1
