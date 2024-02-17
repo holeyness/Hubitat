@@ -120,7 +120,7 @@ def on() {
   }
 
   if (state.drying_mode != null) {
-    setDryingMode(state.drying_mode)
+    setDryingMode(state.drying_mode ? "on" : "off")
   }
 
   if (state.display != null) {
@@ -192,9 +192,10 @@ def setDryingMode(drying_mode_on) {
   logDebug "setDryingMode(${drying_mode_on})"
   def enabled = drying_mode_on == "on"
 
-  handleDryingMode(enabled)
   state.drying_mode = enabled
   handleEvent("drying_mode", enabled)
+  handleDryingMode(enabled)
+
 }
 
 def logDebug(msg) {
@@ -282,7 +283,7 @@ def handleDryingMode(drying_mode_enabled) {
   ]) {
     resp ->
       if (checkHttpResponse("handleDryingMode", resp)) {
-        logDebug "Set drying mode ${mode}"
+        logDebug "Set drying mode ${drying_mode_enabled}"
         result = true
       }
   }
